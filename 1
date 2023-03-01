@@ -1,39 +1,43 @@
 import struct
-from PIL import Image
 
-# Open the .mdl file
-with open(r"C:\Users\defin\Desktop\tommy.mdl", "rb") as f:
-    # Read the header
-    magic, version, num_sections, sec1_offset, sec2_offset, mdl_count, mdl_offset, mdl_count, texture_offset, texture_count = struct.unpack("<4s6I", f.read(28))
-    header_size = 28
-header_data = f.read(header_size)
-if len(header_data) < header_size:
-    print("Error: Invalid header size")
-    exit()
-magic, version, num_sections, sec1_offset, sec2_offset, num_models, mdl_offset, mdl_count, texture_offset, texture_count = struct.unpack("<4s6I", header_data)
-    
-    # Find the texture section header
-f.seek(texture_offset)
-texture_header = f.read(16)
-texture_magic, texture_version, num_textures, texture_data_offset = struct.unpack("<4s3I", texture_header)
+class BinaryReader:
+    def __init__(self, f):
+        self.f = f
 
-    
-    # Read each texture tile and export as .png
-    for i in range(num_textures):
-        f.seek(texture_data_offset + i*0x2000)
-        image_data = []
-        for y in range(16):
-            for x in range(16):
-                pixel_data = f.read(2)
-                # Parse the color index and map to an RGB color value
-                r = (pixel_data[0] & 0x1F) * 8
-                g = ((pixel_data[0] & 0xE0) >> 5 | (pixel_data[1] & 0x03) << 3) * 8
-                b = ((pixel_data[1] & 0x7C) >> 2) * 8
-                image_data.append((r, g, b))
-        
-        # Create a new image object and set the pixel values
-        image = Image.new("RGB", (64, 64))
-        image.putdata(image_data)
-        
-        # Save the image as a .png file
-        image.save(f"texture_{i}.png")
+    def read(self, size):
+        return self.f.read(size)
+
+    def read_uint32(self):
+        return struct.unpack("<I", self.f.read(4))[0]
+
+class ModelHeader:
+    def __init__(self, f, offs):
+        self.offs = offs
+        f.seek(offs + 0x8)
+        self.bone_transform_offs = offs + reader.read_uint32()
+        self.bone_count = reader.read_uint32()
+        self.bone_parent_table_offs = offs + reader.read_uint32()
+        self.helper_count = reader.read_uint32()
+        self.helper_table_offs = offs + reader.read_uint32()
+        self.helper_transform_offs = offs + reader.read_uint32()
+        self.submesh_count = reader.read_uint32()
+        self.submesh_start_offs = offs + reader.read_uint32()
+        self.submesh_blend_count = reader.read_uint32()
+        self.submesh_blend_start_offs = offs + reader.read_uint32()
+        self.image_count = reader.read_uint32()
+        self.image_table_offs = offs + reader.read_uint32()
+        self.texture_count = reader.read_uint32()
+        self.texture_table_offs = offs + reader.read_uint32()
+        reader.read(4)
+        self.morph_base_vertex_count = reader.read_uint32()
+        self.morph_base_vertex_offs = offs + reader.read_uint32()
+        self.morph_data_count = reader.read_uint32()
+        self.morph_data_offs = offs + reader.read_uint32()
+
+filename = "example.mdl"
+
+with open(r"C:\Users\defin\Desktop\chdee.mdl", "rb") as f:
+    f.seek(0x10)
+    texture_offset, texture_count = struct.unpack("<2I", f.read(8))
+    print(texture_offset, texture_count)
+
