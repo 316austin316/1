@@ -1,4 +1,5 @@
 import struct
+from PIL import Image
 
 class BinaryReader:
     def __init__(self, f):
@@ -39,5 +40,23 @@ filename = "example.mdl"
 with open(r"C:\Users\defin\Desktop\chdee.mdl", "rb") as f:
     f.seek(0x10)
     texture_offset, texture_count = struct.unpack("<2I", f.read(8))
-    print(texture_offset, texture_count)
 
+# Read each texture tile and export as .png
+for i in range(texture_count):
+        f.seek(texture_offset + i*0x2000)
+        image_data = []
+        for y in range(16):
+            for x in range(16):
+                pixel_data = f.read(2)
+                # Parse the color index and map to an RGB color value
+                r = (pixel_data[0] & 0x1F) * 8
+                g = ((pixel_data[0] & 0xE0) >> 5 | (pixel_data[1] & 0x03) << 3) * 8
+                b = ((pixel_data[1] & 0x7C) >> 2) * 8
+                image_data.append((r, g, b))
+        
+        # Create a new image object and set the pixel values
+        image = Image.new("RGB", (64, 64))
+        image.putdata(image_data)
+        
+        # Save the image as a .png file
+        image.save(f"texture_{i}.png")
