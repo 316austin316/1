@@ -13,8 +13,10 @@ if len(header_data) < header_size:
 magic, version, num_sections, sec1_offset, sec2_offset, num_models, mdl_offset, mdl_count, texture_offset, texture_count = struct.unpack("<4s6I", header_data)
     
     # Find the texture section header
-    f.seek(texture_offset)
-    texture_magic, texture_version, num_textures, texture_data_offset = struct.unpack("<4s3I", f.read(16))
+f.seek(texture_offset)
+texture_header = f.read(16)
+texture_magic, texture_version, num_textures, texture_data_offset = struct.unpack("<4s3I", texture_header)
+
     
     # Read each texture tile and export as .png
     for i in range(num_textures):
