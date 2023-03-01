@@ -1,62 +1,14 @@
-import struct
-from PIL import Image
-
-class BinaryReader:
-    def __init__(self, f):
-        self.f = f
-
-    def read(self, size):
-        return self.f.read(size)
-
-    def read_uint32(self):
-        return struct.unpack("<I", self.f.read(4))[0]
-
-class ModelHeader:
-    def __init__(self, f, offs):
-        self.offs = offs
-        f.seek(offs + 0x8)
-        self.bone_transform_offs = offs + reader.read_uint32()
-        self.bone_count = reader.read_uint32()
-        self.bone_parent_table_offs = offs + reader.read_uint32()
-        self.helper_count = reader.read_uint32()
-        self.helper_table_offs = offs + reader.read_uint32()
-        self.helper_transform_offs = offs + reader.read_uint32()
-        self.submesh_count = reader.read_uint32()
-        self.submesh_start_offs = offs + reader.read_uint32()
-        self.submesh_blend_count = reader.read_uint32()
-        self.submesh_blend_start_offs = offs + reader.read_uint32()
-        self.image_count = reader.read_uint32()
-        self.image_table_offs = offs + reader.read_uint32()
-        self.texture_count = reader.read_uint32()
-        self.texture_table_offs = offs + reader.read_uint32()
-        reader.read(4)
-        self.morph_base_vertex_count = reader.read_uint32()
-        self.morph_base_vertex_offs = offs + reader.read_uint32()
-        self.morph_data_count = reader.read_uint32()
-        self.morph_data_offs = offs + reader.read_uint32()
-
-filename = "example.mdl"
-
-with open(r"C:\Users\defin\Desktop\chdee.mdl", "rb") as f:
-    f.seek(0x10)
-    texture_offset, texture_count = struct.unpack("<2I", f.read(8))
-
-# Read each texture tile and export as .png
-for i in range(texture_count):
-        f.seek(texture_offset + i*0x2000)
-        image_data = []
-        for y in range(16):
-            for x in range(16):
-                pixel_data = f.read(2)
-                # Parse the color index and map to an RGB color value
-                r = (pixel_data[0] & 0x1F) * 8
-                g = ((pixel_data[0] & 0xE0) >> 5 | (pixel_data[1] & 0x03) << 3) * 8
-                b = ((pixel_data[1] & 0x7C) >> 2) * 8
-                image_data.append((r, g, b))
-        
-        # Create a new image object and set the pixel values
-        image = Image.new("RGB", (64, 64))
-        image.putdata(image_data)
-        
-        # Save the image as a .png file
-        image.save(f"texture_{i}.png")
+ImpType Standard ;
+Get U1 Long 0 ;
+Get FileNum Long 0 ;
+Get Dir2Size Long 0 ;
+Get U2 Long 0 ;
+For T = 1 To FileNum ;
+SavePos FOO 0 ;
+Get FO Long 0 ;
+Get OffDir2 Long 0 ;
+SavePos FSO 0 ;
+Get ComSize Long 0 ;
+Get UnComSize Long 0 ;
+Log "" FO ComSize FOO FSO ;
+Next T ;
