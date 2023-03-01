@@ -1,0 +1,23 @@
+class ModelHeader:
+  def __init__(self, f, offs):
+    self.offs = offs
+    f.seek(offs + 0x8)
+    self.bone_transform_offs = offs + f.read_uint32()
+    self.bone_count = f.read_uint32()
+    self.bone_parent_table_offs = offs + f.read_uint32()
+    self.helper_count = f.read_uint32()
+    self.helper_table_offs = offs + f.read_uint32()
+    self.helper_transform_offs = offs + f.read_uint32()
+    self.submesh_count = f.read_uint32()
+    self.submesh_start_offs = offs + f.read_uint32()
+    self.submesh_blend_count = f.read_uint32()
+    self.submesh_blend_start_offs = offs + f.read_uint32()
+    self.image_count = f.read_uint32()
+    self.image_table_offs = offs + f.read_uint32()
+    self.texture_count = f.read_uint32()
+    self.texture_table_offs = offs + f.read_uint32()
+    f.skip(4)
+    self.morph_base_vertex_count = f.read_uint32()
+    self.morph_base_vertex_offs = offs + f.read_uint32()
+    self.morph_data_count = f.read_uint32()
+    self.morph_data_offs = offs + f.read_uint32()
