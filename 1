@@ -4,7 +4,7 @@ from PIL import Image
 # Open the .mdl file
 with open(r"C:\Users\defin\Desktop\tommy.mdl", "rb") as f:
     # Read the header
-    magic, version, num_sections, sec1_offset, sec2_offset, num_models, mdl_offset, mdl_count, texture_offset, texture_count = struct.unpack("<4s6I", f.read(28))
+    magic, version, num_sections, sec1_offset, sec2_offset, mdl_count, mdl_offset, mdl_count, texture_offset, texture_count = struct.unpack("<4s6I", f.read(28))
     header_size = 28
 header_data = f.read(header_size)
 if len(header_data) < header_size:
